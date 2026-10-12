@@ -88,6 +88,8 @@ require adapting it. Do not simply copy these settings to a different model.
 - These are a few successful tests, not proof of long-term reliability.
   Broadcom ARP-table warnings and SATA ACPI `_GTF` warnings still occurred.
 
+Dedicated display/S3 report: [Omarchy #15103](https://github.com/omacom/omarchy/issues/15103).
+
 Related Omarchy reports: [IOMMU/storage #14160](https://github.com/omacom/omarchy/issues/14160),
 [AMD boot #12550](https://github.com/omacom/omarchy/issues/12550),
 [early KMS #13510](https://github.com/omacom/omarchy/issues/13510),
