@@ -1,0 +1,23 @@
+#!/usr/bin/python
+"""Run under Limine's boot lock, before its config enrollment hook."""
+from pathlib import Path
+import hashlib, re, shutil
+
+config = Path('/boot/limine.conf')
+source = Path('/usr/local/share/omarchy-intel-display/intel-before-linux-default.efi')
+helper = Path('/boot/EFI/Omarchy/intel-before-linux-default.efi')
+uki = Path('/boot/EFI/Linux/omarchy_linux-omarchy.efi')
+assert source.is_file() and uki.is_file()
+original = config.read_text()
+match = re.search(r'(?m)^  //linux-omarchy\n(?:(?!^\s*/).|\n)*', original)
+assert match, 'Default linux-omarchy entry missing'
+entry = match.group()
+assert 'kernel-id=linux-omarchy' in entry
+shutil.copyfile(source, helper)
+digest = hashlib.blake2b(helper.read_bytes()).hexdigest()
+revised = re.sub(r'(?m)^  path:.*$', '  path: boot():/EFI/Omarchy/intel-before-linux-default.efi#' + digest, entry)
+if revised != entry:
+    updated = original[:match.start()] + revised + original[match.end():]
+    assert updated.replace(revised, entry) == original
+    config.write_text(updated)
+print('Default linux-omarchy entry selects Intel before its maintained UKI.')
